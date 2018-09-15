@@ -2,10 +2,12 @@ package search;
 
 import java.awt.print.Printable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import com.sun.glass.ui.TouchInputSupport;
+import com.sun.org.apache.regexp.internal.REUtil;
 import com.sun.org.apache.xerces.internal.parsers.NonValidatingConfiguration;
 import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
@@ -29,70 +31,24 @@ public class GenerateAndTest {
 		this.csp = csp ;
 	}
 	
-	
-	public static void backtrack1(Csp csp) {
-		boolean skip = false;
-		if (csp.hasNecessary()&&hasInitVar) {
-			for(Variable v: csp.getVars())
-	    	{
-	    		if(v.isInstantiated()&&!inst.contains(v))
-	    		{
-	    			if (propagation(csp,v)) {
-	    				inst.add(v);
-					}
-	    			else {
-						skip=true;
-					}
-	    			System.out.println("----------------------");
-	    			System.out.println(propagation(csp, v));
-	    			System.out.println(csp);
-	    			System.out.println("----------------------");
-	    		}
-	    	}
-			if (!skip) {
-				skip = false;
-				if (csp.allInstanciated()) {
-					System.out.println("all init");
-					compteurParcours++;
-		    		if (csp.hasSolution()) {    		
-		    			compteur++;
-			    		System.out.println("get solution: "+inst);
-					}
-				}else {
-					Variable y  = csp.randomVar();
-		    		for(int i = y.getInf();i<y.getSup()+1;i++)
-		        	{
-		        		Domain d1 = y.getDomain().clone();
-		        		if(d1.size()==0)
-		        		{
-		        			System.out.println(y+"        "+i);
-		        		}else {
-		        			System.out.println(y+"  no   "+i);
-						}
-		        		
-		        		y.instantiate(i);
-		        		hasInitVar = true;
-		        		backtrack1(csp);
-		        		y.setDomain(d1);
-		        	}
-				}
-			}
-		}
-		//init une variable pour le premier temp
-		if (!hasInitVar) {
-    		Variable y  = csp.randomVar();
-    		System.out.println("first born "+y);
-    		for(int i = y.getInf();i<y.getSup()+1;i++)
-        	{
-        		Domain d1 = y.getDomain().clone();
-        		System.out.println(y+"      down      "+i);
-    			y.instantiate(i);
-				hasInitVar = true;
-        		backtrack1(csp);
-        		y.setDomain(d1);
-        	}
-		}
-	}
+//	public static void propagationWithRouting(Csp csp)
+//	{
+//		int[] dsize = new int[csp.getVars().length];
+//		for(int i=0;i<csp.getVars().length;i++)
+//		{
+//			dsize[i] = csp.getVars()[i].getDomainSize();
+//		}
+//		
+//		HashMap<Variable, List<Constraint>> routingMap = new HashMap<Variable, List<Constraint>>();
+//		for(Variable v:csp.getVars())
+//		{
+//			for(Constraint c: csp.getConstraints())
+//			{
+//
+//				routingMap.put(v, value);
+//			}
+//		}
+//	}
 	
 	public static void backtrack(Csp csp) {
 		for(Variable v: csp.getVars())
@@ -136,34 +92,25 @@ public class GenerateAndTest {
 		}
 	}
 
-	public static boolean propagation(Csp csp,Variable v) {
-//		ArrayList lc = new ArrayList<Constraint>();
-//		for(Constraint c: csp.getConstraints())
-//		{
-//			for(int i=0;i<2;i++)
-//			{
-////				System.out.println("in propagation"+c+"  "+i+" "+v);
-//				if (c.getVars()[i].equals(v)&&!lc.contains(c)) {
-//					lc.add(c);
-//				}
-//			}
-//		}
-//		for (Iterator iterator = lc.iterator(); iterator.hasNext();) {
-//			Constraint c = (Constraint) iterator.next();
-//			Domain d1 = c.getVars()[0].getDomain();
-//			Domain d2 = c.getVars()[1].getDomain();
-//			if (!c.filtrer()) {
-//				System.out.println(d1);
-//				System.out.println(d2);
-//				c.getVars()[0].setDomain(d1);
-//				c.getVars()[1].setDomain(d2);
-//				return false;
-//			}
-//		}
-//		return true;
-		pro
+	public static void propagation(Csp csp) {
+		int[] dsize = new int[csp.getVars().length];
+		for(int i=0;i<csp.getVars().length;i++)
+		{
+			dsize[i] = csp.getVars()[i].getDomainSize();
+		}
+		for(Constraint c: csp.getConstraints())
+		{
+			System.out.println("pro");
+			c.filtrer();
+		}
+		System.out.println(csp);
+		for(int i=0;i<csp.getVars().length;i++)
+		{
+			if (csp.getVars()[i].getDomainSize()!=dsize[i]) {
+				propagation(csp);
+			}
+		}
 	}
-	
 
 	public static void bruteForceSearch(Csp csp) {
         // ATTENTION A completer !!!!
@@ -207,10 +154,18 @@ public class GenerateAndTest {
 		}
     }
    
+//	public static void resolutionPB(int valMax)
+//	{
+//		CspGenerator cspGenerator 
+//	}
+	
+	
+	
+	
     public static void main(String[] args) throws Exception {
-    	int variableNum = 3;
-    	int variableSize = 6;
-    	int constraintNum = 2;
+    	int variableNum = 10;
+    	int variableSize = 10;
+    	int constraintNum = 8;
     	
     	
     	int[] size  = new int[variableNum];
@@ -220,35 +175,36 @@ public class GenerateAndTest {
     	}
     	CspGenerator cspGen  = new CspGenerator(variableNum, size, constraintNum);
     	Csp csp = cspGen.generateur();
-    	
-    	
-
-
     	System.out.println(csp);
-//    	long startTime1 = System.currentTimeMillis();
-//    	bruteForceSearch(csp);
-//    	long endTime1 =  System.currentTimeMillis();	
-//    	System.out.println(" ----------------- Statistic start ---------------------- ");
-//    	System.out.println("bruteForceSearch is computed in : " + (endTime1 - startTime1) + " ms");
-//    	System.out.println("Soulution has : "+compteur);
-//    	System.out.println("Iteraters Node has : "+compteurParcours);
-//    	System.out.println("All Solutions have :"+(int)Math.pow(variableSize,variableNum));
-//    	System.out.println(" ----------------- Statistic end ------------------------- ");
+//    	propagation(csp);
 
-//    	compteur=0;
-//    	compteurParcours=0;
-//    	System.out.println("============================================================");
-    	long startTime = System.currentTimeMillis();
-    	backtrack1(csp);
-    	long endTime =  System.currentTimeMillis();
-    	
+//		for(Constraint c: csp.getConstraints())
+//		{
+//			System.out.println("pro");
+//			c.filtrer();
+//		}
+    	long startTime1 = System.currentTimeMillis();
+    	backtrack(csp);
+    	long endTime1 =  System.currentTimeMillis();	
     	System.out.println(" ----------------- Statistic start ---------------------- ");
-    	System.out.println("backtrackWithFligtage is computed in : " + (endTime - startTime) + " ms");
+    	System.out.println("bruteForceSearch is computed in : " + (endTime1 - startTime1) + " ms");
     	System.out.println("Soulution has : "+compteur);
     	System.out.println("Iteraters Node has : "+compteurParcours);
     	System.out.println("All Solutions have :"+(int)Math.pow(variableSize,variableNum));
     	System.out.println(" ----------------- Statistic end ------------------------- ");
-    	
 
+//    	compteur=0;
+//    	compteurParcours=0;
+    	
+//    	long startTime = System.currentTimeMillis();
+//    	backtrack(csp);
+//    	long endTime =  System.currentTimeMillis();
+//    	
+//    	System.out.println(" ----------------- Statistic start ---------------------- ");
+//    	System.out.println("backtrackWithFligtage is computed in : " + (endTime - startTime) + " ms");
+//    	System.out.println("Soulution has : "+compteur);
+//    	System.out.println("Iteraters Node has : "+compteurParcours);
+//    	System.out.println("All Solutions have :"+(int)Math.pow(variableSize,variableNum));
+//    	System.out.println(" ----------------- Statistic end ------------------------- ");
 	}
 }

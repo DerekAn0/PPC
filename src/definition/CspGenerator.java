@@ -28,12 +28,12 @@ public class CspGenerator {
 		{
 			int randomUnder10 = (int)(Math.random()*freedom);
 //			Variable variable = new Variable("Variable "+i,i,randomUnder10, randomUnder10+taille[i-1]-1);
-			Variable variable = new Variable("Variable "+i,i,1, 10);
+			Variable variable = new Variable("Variable "+i,i,randomUnder10,randomUnder10+taille[i-1]-1);
 			vS[i-1] = variable;
 		}
-//		vS[0] = new Variable("Variable "+1,1,2, 7);
-//		vS[1] = new Variable("Variable "+2,2,1, 6);
-//		vS[2] = new Variable("Variable "+3,3,2, 7);
+//		vS[0] = new Variable("Variable "+1,1,7, 9);
+//		vS[1] = new Variable("Variable "+2,2,1, 3);
+//		vS[2] = new Variable("Variable "+3,3,2, 5);
 		if(nb_cons>nb_v-1)
 		{
 			throw new Exception("Number of constraints bigger or equals nb of variables");

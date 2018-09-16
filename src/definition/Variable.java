@@ -86,7 +86,6 @@ public class Variable {
     		return oVariable.name==this.name;
 		} catch (Exception e) {
 			// TODO: handle exception
-//			System.err.println(o.toString());
 			return false;
 		}
     }

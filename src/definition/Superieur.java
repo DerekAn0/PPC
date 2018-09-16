@@ -38,27 +38,44 @@ public class Superieur implements Constraint {
 
 	@Override
 	public boolean filtrer() {
-		
+		int domainSize0 = this.variables[0].getDomainSize();
+		int domainSize1 = this.variables[1].getDomainSize();
 		for(int i = this.variables[0].getInf();i<=this.variables[1].getInf();i++)
 		{
-			this.variables[0].remValue(i);
+			if(this.variables[0].getDomainSize()!=0&&
+					this.variables[1].getDomainSize()!=0) 
+			{
+				this.variables[0].remValue(i);
+			}else {
+				return false;
+			}
 		}
+
 		for(int i = this.variables[0].getSup();i<=this.variables[1].getSup();i++)
 		{
-			this.variables[1].remValue(i);
+			if(this.variables[0].getDomainSize()!=0&&
+					this.variables[1].getDomainSize()!=0) 
+			{
+				this.variables[1].remValue(i);
+			}else {
+				return false;
+			}				
 		}
-		return true;
+
+		return this.variables[0].getDomainSize()!=0&&
+				this.variables[1].getDomainSize()!=0;
 		
 	}
 	
 	public static void main(String[] args) {
 		Variable[] vL = new Variable[2];
-		vL[0] = new Variable("v1",1,2,7);
+		vL[0] = new Variable("v1",1,1,8);
 		vL[1] = new Variable("v2",2,6,19);
 		Constraint c1 = new Superieur(vL);
 		System.out.println(vL[0].getDomain());
 		System.out.println(vL[1].getDomain());
-		System.out.println(c1.isNecessary());
+		System.out.println(c1.filtrer());
+//		System.out.println(c1.filtrer());
 		System.out.println(vL[0].getDomain());
 		System.out.println(vL[1].getDomain());
 	}

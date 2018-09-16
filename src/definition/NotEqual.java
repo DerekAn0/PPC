@@ -39,35 +39,40 @@ public class NotEqual implements Constraint {
 		// TODO Auto-generated method stub
 		return variables[0].name+" != "+ variables[1].name;
 	}
-	public static void main(String[] args) {
-		
-		Variable a1 = new Variable("a1",1,1,1);
-		Variable a2 = new Variable("a2",1,0,2);
-		
-		Variable[] listVar = new Variable[2];
-		listVar [0]= a1;
-		listVar [1]= a2;
-		a1.instantiate(1);
-		a2.instantiate(2);
-		
-		NotEqual mt = new NotEqual(listVar);
-		System.out.println(a1);
-		System.out.println(a2);
-		System.out.println(mt.isNecessary());
-	}
+
 
 	@Override
 	public boolean filtrer() {
 		// TODO Auto-generated method stub
-		if (this.variables[0].isInstantiated()) {
-			this.variables[1].remValue(this.variables[0].getValue());
+		if(this.variables[0].getDomainSize()!=0&&
+				this.variables[1].getDomainSize()!=0) 
+		{
+			if (this.variables[0].isInstantiated()) {
+				this.variables[1].remValue(this.variables[0].getValue());
+			}
 		}
-		if (this.variables[1].isInstantiated()) {
-			this.variables[0].remValue(this.variables[1].getValue());
+		if(this.variables[0].getDomainSize()!=0&&
+				this.variables[1].getDomainSize()!=0) 
+		{
+			if (this.variables[1].isInstantiated()) {
+				this.variables[0].remValue(this.variables[1].getValue());
+			}
 		}
 		
 		return this.variables[0].getDomainSize()!=0&&
 				this.variables[1].getDomainSize()!=0;
+	}
+	public static void main(String[] args) {
+		Variable[] vL = new Variable[2];
+		vL[0] = new Variable("v1",1,6,7);
+		vL[1] = new Variable("v2",2,6,6);
+		vL[0].instantiate(6);
+		Constraint c1 = new NotEqual(vL);
+		System.out.println(vL[0].getDomain());
+		System.out.println(vL[1].getDomain());
+		System.out.println(c1.filtrer());
+		System.out.println(vL[0].getDomain());
+		System.out.println(vL[1].getDomain());
 	}
 
 }

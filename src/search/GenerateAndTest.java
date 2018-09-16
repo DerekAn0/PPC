@@ -33,7 +33,7 @@ public class GenerateAndTest {
 				compteurParcours++;
 	    		if (csp.hasSolution()) {    		
 	    			compteur++;
-//	    			System.out.println(csp);
+	    			System.out.println(csp);
 				}
 			}else {
 				Variable y  = csp.randomVar();
@@ -65,6 +65,7 @@ public class GenerateAndTest {
 	        	}
 			}	
 	}
+
 	public static boolean AllGood(Csp csp )
 	{
 		for(Variable v:csp.getVars())
@@ -75,6 +76,7 @@ public class GenerateAndTest {
 		}
 		return true;
 	}
+	
 	public static void propagation(Csp csp,Variable v) {
 		List l = new ArrayList<Integer>();
 		List ecart = new ArrayList<Variable>();
@@ -89,12 +91,6 @@ public class GenerateAndTest {
 				c.filtrer();
 			}
 		}
-//		List l1 = new ArrayList<Variable>();
-//		for(Variable v1: csp.getVars())
-//		{
-//			l1.add(v1.getDomainSize());
-//		}
-
 		for (int i = 0; i < csp.getVars().length; i++) {
 			if ((Integer)csp.getVars()[i].getDomainSize()!=l.get(i)) {
 				ecart.add(csp.getVars()[i]);
@@ -285,7 +281,7 @@ public class GenerateAndTest {
 		v2[0]=variable[nb-1];
 		v2[1]=variable[nb/2];
 		cList[nb-1] = new SuperieurEqual(v2);
-		
+		//modifer ici à Constraint cListR[] = new Constraint[nb+2]; pour lancer 2.2
 		Constraint cListR[] = new Constraint[nb+1];
 		for(int i=0;i<nb;i++)
 		{
@@ -295,7 +291,7 @@ public class GenerateAndTest {
 		v3[0]=variable[0];
 		v3[1]=variable[nb/2];
 		cListR[nb] = new Superieur(v3);
-		
+		//décommenter ici pour lancer 2.2
 //		Variable v4[] = new Variable[2];
 //		v4[0]=variable[nb-1];
 //		v4[1]=variable[0];
@@ -303,12 +299,6 @@ public class GenerateAndTest {
 		//CSP GEN
 		
 		Csp csp = new Csp(variable, cListR);
-//		System.out.println(csp);
-//		 csp.getVars()[2].instantiate(2);
-//		propagation(csp, csp.getVars()[2]);
-		System.out.println(csp);
-		
-
 		long startTime1 = System.currentTimeMillis();
 		backtrack(csp);
 		long endTime1 =  System.currentTimeMillis();	
@@ -322,8 +312,6 @@ public class GenerateAndTest {
 		compteurParcours=0;
 	}
 	
-	
-   
 	public static void main(String[] args) throws Exception {
 		//1
 //    	resolutionPB(3);
@@ -332,14 +320,17 @@ public class GenerateAndTest {
 //    	resolutionPB(6);
 //    	resolutionPB(7);
 		//2.1
+    	circuitSuperieur(1000);
+    	//2.2 Pour valider 2.2 il faut decommenter la ligne de 293 a 296 et changer la ligne 289 a Constraint cListR[] = new Constraint[nb+2]; 
 //    	circuitSuperieur(1000);
-    	//2.2
-//    	circuitSuperieur(1000);
-    	
-
-    	
+		//3
+//		Variable[] vars = new Variable[3];
+//		vars[0] = new Variable("disatance", 0, 1, 4);
+//		vars[1] = new Variable("x", 1, 6, 10);
+//		vars[2] = new Variable("y", 2, 1, 3);
+//		Constraint[] cons= new Distance[1];
+//		cons[0] = new Distance(vars);
+//		Csp csp = new Csp(vars, cons);
+//		GenerateAndTest.backtrack(csp);
 	}
-
-
-
 }
